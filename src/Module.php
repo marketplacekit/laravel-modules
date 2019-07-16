@@ -312,6 +312,11 @@ abstract class Module extends ServiceProvider
      */
     public function isStatus($status) : bool
     {
+        try {
+			return ((int) setting('modules.'.$this->json()->getAttributes()['alias'], $this->get('active', 0))) === $status;
+		} catch(\Exception $e) {
+		
+		}
         return $this->get('active', 0) === $status;
     }
 
@@ -344,7 +349,13 @@ abstract class Module extends ServiceProvider
      */
     public function setActive($active)
     {
-        return $this->json()->set('active', $active)->save();
+     	try {
+			return setting(['modules.'.$this->json()->getAttributes()['alias'] => $active])->save();
+		} catch(\Exception $e) {
+    		dump($e);
+		}
+        return;
+        //return $this->json()->set('active', $active)->save();
     }
 
     /**
